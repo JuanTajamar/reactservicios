@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import Global from '../Global';
 
 export default class ServiceApiSuppliers extends Component {
     cajaNumber = React.createRef();
@@ -9,15 +10,16 @@ export default class ServiceApiSuppliers extends Component {
         selectedSupplier: null
     }
 
-    url = "https://services.odata.org/V4/Northwind/Northwind.svc/Suppliers"
+    url = Global.urlNorthwind
 
     loadSuppliers =  () => {
+        let request = "Suppliers"
         console.log("Antes del servicio")
-        axios.get(this.url).then(request => {
+        axios.get(this.url + request).then(response => {
             console.log("Leyendo servicio")
-            console.log(request.data.value)
+            console.log(response.data.value)
             this.setState({
-                suppliers: request.data.value
+                suppliers: response.data.value
             })
 
         })
@@ -30,13 +32,29 @@ export default class ServiceApiSuppliers extends Component {
         let supplierInfo = parseInt(this.cajaNumber.current.value)
         let selected = null;
         for (let i = 0; i < this.state.suppliers.length; i++) {
-            const s = this.state.suppliers[i];
-            if (s.SupplierID === supplierInfo) {
+            var s = this.state.suppliers[i];
+            if (s.SupplierID == supplierInfo) {
                 selected = s;
             }
         }
         this.setState({ selectedSupplier: selected });
     }
+
+    // findSupplierId = () => {
+    //     event.preventDefault()
+            // let idSupplier = parseInt(this.cajaNumber.current.value)
+    //     Realizamos la peticion de nuevo a todos los proveedores
+            // axios.get(this.url).then(response => {
+            //     for (var supplier of response.data.value) {
+                        // if (supplier.SupplierID == idSupplier){
+                        //      this.setState({
+                        //      supplier: supplier
+                        //   })
+                        // break;                          
+                        // }
+            //     }
+            // })
+    // }
 
     componentDidMount = () => {
         this.loadSuppliers();
@@ -49,11 +67,11 @@ export default class ServiceApiSuppliers extends Component {
         <ul>
             {
                 this.state.suppliers.map((supplier, index) => {
-                    return (<li key={index} style={{color:"blue"}}>{supplier.SupplierID}: {supplier.ContactName}</li>)
+                    return (<li key={index}>{supplier.SupplierID} - {supplier.ContactName}</li>)
             })
             }
         </ul>
-
+        <hr/>
         <form onSubmit={this.loadOneSupplier}>
             <label>Supplier especifico</label>
             <input type='number' ref={this.cajaNumber}/>
