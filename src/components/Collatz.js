@@ -26,6 +26,13 @@ export default class Collatz extends Component {
     componentDidMount = () => {
         this.generarCollatz();
     }
+
+    componentDidUpdate = (oldProps) => {
+        if (oldProps.numerocol != this.props.numerocol){
+            this.generarCollatz();
+        }
+    }
+
   render() {
     return (
       <div>
